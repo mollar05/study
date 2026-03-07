@@ -277,8 +277,9 @@
          ========================================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        // 팝업 없이 즉시 로그인하기 위해 인증 모듈 변경
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
         // Firebase 설정
         const firebaseConfig = {
@@ -293,6 +294,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // 환경 변수에서 appId 가져오기 (필수 보안 규칙)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         // 앱 상태 변수
         let currentUser = null;
@@ -328,11 +332,22 @@
         // -------------------------------------------------------------
         // 인증 및 초기 로드 로직
         // -------------------------------------------------------------
-        document.getElementById('loginBtn').onclick = () => {
-            const provider = new GoogleAuthProvider();
-            signInWithRedirect(auth, provider).catch(error => {
+        document.getElementById('loginBtn').onclick = async () => {
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = "접속 중... 🚀";
+            btn.disabled = true;
+            try {
+                // 팝업창 없이 Canvas 환경의 토큰 또는 익명 로그인으로 즉시 패스
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
                 alert("로그인 에러: " + error.message);
-            });
+                btn.innerHTML = "시작하기";
+                btn.disabled = false;
+            }
         };
 
         document.getElementById('logoutBtn').onclick = () => signOut(auth);
@@ -340,10 +355,14 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('userEmailText').innerText = user.displayName || user.email;
+                document.getElementById('userEmailText').innerText = user.email || "테스트 사용자";
                 renderSubjectPage();
-                await loadTodayTotalTime(); // 오늘 총 공부시간 로드
-                showPage("subjectPage");
+                
+                // [중요 수정] 데이터를 불러오기 전에 화면을 과목 페이지로 먼저 전환합니다.
+                showPage("subjectPage"); 
+                
+                // 이후 백그라운드에서 시간 데이터를 로드하여 지연 현상을 방지합니다.
+                await loadTodayTotalTime(); 
             } else {
                 currentUser = null;
                 showPage("loginPage");
@@ -374,15 +393,16 @@
             if (!currentUser) return;
             const today = getTodayDateString();
             try {
-                // 사용자의 모든 기록 중 오늘 날짜인 것만 가져오기
-                const q = query(
-                    collection(db, "users", currentUser.uid, "study_sessions"),
-                    where("date", "==", today)
-                );
-                const snapshot = await getDocs(q);
+                // 권한 오류를 방지하기 위해 엄격한 경로 사용 및 JS 메모리에서 필터링
+                const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
+                const snapshot = await getDocs(sessionsRef);
                 let totalSeconds = 0;
+                
                 snapshot.forEach(doc => {
-                    totalSeconds += doc.data().durationInSeconds || 0;
+                    const data = doc.data();
+                    if (data.date === today) {
+                        totalSeconds += data.durationInSeconds || 0;
+                    }
                 });
                 
                 const hr = Math.floor(totalSeconds / 3600);
@@ -413,13 +433,12 @@
 
             let snapshot;
             try {
-                const q = query(
-                    collection(db, "users", currentUser.uid, "study_sessions"),
-                    where("subject", "==", subject)
-                );
-                snapshot = await getDocs(q);
+                // 권한 오류 방지 경로 적용 및 데이터 전체 가져오기
+                const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
+                snapshot = await getDocs(sessionsRef);
             } catch (e) {
                 alert("데이터 불러오기 실패. 인터넷 연결을 확인하세요.");
+                console.error(e);
                 return;
             } finally {
                 document.getElementById('graphLoading').style.display = 'none';
@@ -428,15 +447,17 @@
 
             const dailyData = {};
 
-            // 데이터 일자별 병합
+            // 데이터 일자별 병합 (JS에서 과목 필터링 수행)
             snapshot.forEach(doc => {
                 const data = doc.data();
-                const date = data.date;
-                if (!dailyData[date]) {
-                    dailyData[date] = { seconds: 0, problems: 0 };
+                if (data.subject === subject) {
+                    const date = data.date;
+                    if (!dailyData[date]) {
+                        dailyData[date] = { seconds: 0, problems: 0 };
+                    }
+                    dailyData[date].seconds += (data.durationInSeconds || 0);
+                    dailyData[date].problems += (data.problems || 0);
                 }
-                dailyData[date].seconds += (data.durationInSeconds || 0);
-                dailyData[date].problems += (data.problems || 0);
             });
 
             const sortedDates = Object.keys(dailyData).sort();
@@ -550,11 +571,14 @@
                 endTime: endTime.toISOString(),
                 durationInSeconds: durationInSeconds,
                 problems: problems,
-                timestamp: new Date() // 정렬을 위한 타임스탬프 추가
+                timestamp: new Date().toISOString() // 정렬을 위한 타임스탬프 추가
             };
 
             try {
-                await addDoc(collection(db, "users", currentUser.uid, "study_sessions"), sessionData);
+                // 엄격한 데이터베이스 경로 적용
+                const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
+                await addDoc(sessionsRef, sessionData);
+                
                 await loadGraphData(currentSubject); // 그래프 리로드
                 showPage("graphPage"); // 그래프 페이지로 귀환
             } catch (error) {
