@@ -2,33 +2,46 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공부 트래커 (구글 로그인 전용)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>공부 트래커</title>
     <!-- Chart.js 라이브러리 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* =========================================
-           CSS 스타일 (스타일링 캡슐화)
+           CSS 스타일 (모바일 앱 스타일 프리미엄 UI)
            ========================================= */
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --danger: #EF4444;
+            --danger-hover: #DC2626;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #f4f7f6;
+            background-color: var(--bg-color);
             display: flex;
             justify-content: center;
             height: 100vh;
+            height: 100dvh; /* 모바일 브라우저 툴바 대응 */
         }
 
         #app {
             width: 100%;
             max-width: 480px;
-            background-color: #ffffff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -40,7 +53,7 @@
             flex-direction: column;
             padding: 24px;
             height: 100%;
-            animation: fadeIn 0.3s ease;
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             overflow-y: auto;
         }
 
@@ -48,179 +61,130 @@
             display: flex;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1, h2 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+        h1 { font-size: 24px; color: var(--text-main); margin-bottom: 8px; text-align: center; font-weight: 700; }
+        h2 { font-size: 20px; color: var(--text-main); margin-bottom: 16px; font-weight: 600; }
+        p { color: var(--text-muted); text-align: center; margin-bottom: 30px; line-height: 1.5; }
 
-        p {
-            color: #666;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* 버튼 스타일 */
+        /* 버튼 공통 스타일 */
         button {
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 16px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
-        .primary-btn {
-            background-color: #4CAF50;
-            color: white;
-            width: 100%;
-        }
+        button:active { transform: scale(0.98); }
 
-        .primary-btn:hover { background-color: #45a049; }
+        .primary-btn { background-color: var(--primary); color: white; width: 100%; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .primary-btn:hover { background-color: var(--primary-hover); }
 
-        .danger-btn {
-            background-color: #f44336;
-            color: white;
-            width: 100%;
-        }
+        .danger-btn { background-color: var(--danger); color: white; width: 100%; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .danger-btn:hover { background-color: var(--danger-hover); }
 
-        .danger-btn:hover { background-color: #da190b; }
+        .icon-btn { background: none; padding: 8px; color: var(--text-muted); font-size: 15px; width: auto; font-weight: 500; }
+        .icon-btn:hover { color: var(--text-main); background-color: #F3F4F6; border-radius: 8px; }
 
-        .icon-btn {
-            background: none;
-            padding: 8px;
-            color: #555;
-            font-size: 14px;
-            width: auto;
-        }
-
-        .large-btn {
-            margin-top: auto;
-            margin-bottom: 20px;
-        }
+        .large-btn { margin-top: auto; margin-bottom: 20px; }
 
         /* 과목 그리드 */
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 16px;
         }
 
         .subject-btn {
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 20px;
+            background-color: #F9FAFB;
+            color: var(--text-main);
+            padding: 24px 16px;
             font-size: 16px;
-            border-radius: 12px;
+            border-radius: 16px;
+            border: 1px solid #E5E7EB;
+            flex-direction: column;
+            gap: 12px;
         }
+        .subject-btn span.icon { font-size: 28px; }
+        .subject-btn:hover { background-color: #EEF2FF; border-color: var(--primary); color: var(--primary); }
 
-        .subject-btn:hover { background-color: #e0e0e0; }
+        /* 오늘 공부 요약 카드 */
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary), #818CF8);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        .summary-card h3 { font-size: 14px; font-weight: 500; opacity: 0.9; margin-bottom: 8px; }
+        .summary-card .time { font-size: 32px; font-weight: 700; }
 
         /* 타이머 */
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .timer-circle {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background-color: #F8FAFC;
+            border: 8px solid var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 40px rgba(79, 70, 229, 0.2);
+        }
         .timer-display {
-            font-size: 56px;
-            font-weight: bold;
-            text-align: center;
-            margin: 60px 0;
+            font-size: 48px;
+            font-weight: 800;
             font-variant-numeric: tabular-nums;
-            color: #2c3e50;
+            color: var(--text-main);
+            letter-spacing: -1px;
         }
 
         /* 입력폼 */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 30px;
-        }
-
-        .input-group label {
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: bold;
-        }
-
+        .input-group { display: flex; flex-direction: column; margin-bottom: 30px; }
+        .input-group label { margin-bottom: 10px; color: var(--text-main); font-weight: 600; font-size: 15px; }
         .input-group input {
-            padding: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
+            padding: 16px; border: 2px solid #E5E7EB; border-radius: 12px;
+            font-size: 18px; outline: none; transition: border-color 0.2s; text-align: center;
         }
-        
-        .input-group input:focus {
-            border-color: #4CAF50;
-        }
+        .input-group input:focus { border-color: var(--primary); }
 
         /* 그래프 영역 */
-        .header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .header h2 {
-            margin: 0;
-            flex-grow: 1;
-            text-align: center;
-        }
-        .chart-container {
-            flex-grow: 1;
-            position: relative;
-            width: 100%;
-            min-height: 250px;
-            margin-bottom: 20px;
-        }
+        .header { display: flex; align-items: center; margin-bottom: 24px; }
+        .header h2 { margin: 0; flex-grow: 1; text-align: center; }
+        .chart-container { flex-grow: 1; position: relative; width: 100%; min-height: 250px; margin-bottom: 20px; }
 
         /* 로그인 정보 UI */
         .user-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #e8f5e9;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #2e7d32;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #E5E7EB;
         }
+        .user-email { font-size: 14px; color: var(--text-muted); font-weight: 500; }
         .logout-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-            background-color: transparent;
-            border: 1px solid #2e7d32;
-            color: #2e7d32;
-            border-radius: 4px;
+            padding: 8px 12px; font-size: 13px; background-color: #F3F4F6;
+            color: var(--text-main); border-radius: 8px; font-weight: 600; box-shadow: none;
         }
+        .logout-btn:hover { background-color: #E5E7EB; }
 
-        /* 에러 메시지 박스 */
-        #loginError {
-            display: none;
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 16px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 14px;
-            line-height: 1.5;
-            text-align: left;
-            border: 1px solid #ffcdd2;
-        }
-        
-        .domain-highlight {
-            display: block;
-            background: #fff;
-            padding: 8px;
-            margin: 8px 0;
-            border-radius: 4px;
-            font-weight: bold;
-            color: #d32f2f;
-            user-select: all;
-            word-break: break-all;
+        /* 로딩 스피너 */
+        .loading {
+            text-align: center; padding: 40px; color: var(--text-muted); font-weight: 500; display: none;
         }
     </style>
 </head>
@@ -228,54 +192,83 @@
     <div id="app">
         <!-- 1. 로그인 페이지 -->
         <div id="loginPage" class="page active">
-            <h1 style="margin-top: 40px;">📚 공부 트래커</h1>
-            <p>구글 계정으로 로그인하고 기록을 시작하세요!</p>
-            <button id="loginBtn" class="primary-btn" style="margin-top: 20px;">Google 계정으로 로그인</button>
-            
-            <!-- 에러 발생 시 도메인을 정확히 알려주는 UI -->
-            <div id="loginError"></div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <span style="font-size: 64px; margin-bottom: 20px;">🎯</span>
+                <h1>스터디 트래커</h1>
+                <p>당신의 목표를 향한 매일의 기록<br>지금 바로 시작하세요.</p>
+                <button id="loginBtn" class="primary-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-right:8px;"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+                    Google 계정으로 로그인
+                </button>
+            </div>
         </div>
 
         <!-- 2. 과목 선택 페이지 -->
         <div id="subjectPage" class="page">
-            <div class="user-info" id="userInfoDisplay">
-                <span id="userEmailText">사용자 이메일</span>
+            <div class="user-info">
+                <span id="userEmailText" class="user-email">사용자</span>
                 <button id="logoutBtn" class="logout-btn">로그아웃</button>
             </div>
-            <h2>어떤 과목을 볼까요?</h2>
-            <div id="subjectList" class="grid-container"></div>
+            
+            <div class="summary-card">
+                <h3>오늘의 총 공부 시간 ⏱️</h3>
+                <div class="time" id="todayTotalTime">0시간 0분</div>
+            </div>
+
+            <h2>어떤 과목을 공부할까요?</h2>
+            <div id="subjectList" class="grid-container">
+                <!-- JS에서 버튼 동적 생성 -->
+            </div>
         </div>
 
         <!-- 3. 그래프 페이지 -->
         <div id="graphPage" class="page">
             <div class="header">
-                <button id="backToSubjectsBtn" class="icon-btn">◀ 과목 목록</button>
+                <button id="backToSubjectsBtn" class="icon-btn">◀ 뒤로</button>
                 <h2 id="graphSubjectTitle">과목명</h2>
-                <div style="width: 70px;"></div> <!-- 중앙 정렬용 여백 -->
+                <div style="width: 50px;"></div>
             </div>
+            
+            <p style="margin-bottom: 10px; font-size: 14px;">최근 학습 추이 (시간 & 푼 문제 수)</p>
+            <div id="graphLoading" class="loading">데이터를 불러오는 중...</div>
             <div class="chart-container">
                 <canvas id="studyChart"></canvas>
             </div>
-            <button id="startStudyBtn" class="primary-btn large-btn">⏱️ 공부 시작하기</button>
+            
+            <button id="startStudyBtn" class="primary-btn large-btn">▶️ 이 과목 공부 시작하기</button>
         </div>
 
         <!-- 4. 타이머 페이지 -->
         <div id="timerPage" class="page">
-            <h2 id="timerSubjectTitle" style="margin-top: 40px;">과목명</h2>
-            <p>집중해서 공부를 진행하세요.</p>
-            <div class="timer-display" id="timerDisplay">00:00:00</div>
-            <button id="stopStudyBtn" class="danger-btn large-btn">⏹️ 공부 종료</button>
+            <h2 id="timerSubjectTitle" style="margin-top: 20px; text-align: center; color: var(--primary);">과목명</h2>
+            <p>스마트폰을 내려놓고 집중해보세요!</p>
+            
+            <div class="timer-container">
+                <div class="timer-circle">
+                    <div class="timer-display" id="timerDisplay">00:00:00</div>
+                </div>
+            </div>
+
+            <button id="stopStudyBtn" class="danger-btn large-btn">⏹️ 공부 종료하기</button>
         </div>
 
-        <!-- 5. 문제 수 입력 페이지 -->
+        <!-- 5. 문제 수 입력 (결과) 페이지 -->
         <div id="problemPage" class="page">
-            <h2 style="margin-top: 40px;">수고하셨습니다! 🎉</h2>
-            <p id="resultTimeText" style="font-size: 18px; font-weight: bold; color: #4CAF50;">오늘 공부한 시간: 0분</p>
-            <div class="input-group">
-                <label for="problemInput">푼 문제 수를 입력하세요 (선택)</label>
-                <input type="number" id="problemInput" placeholder="예: 25" min="0">
+            <div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+                <span style="font-size: 48px;">🎉</span>
+                <h2 style="margin-top: 10px;">수고하셨습니다!</h2>
             </div>
-            <button id="saveSessionBtn" class="primary-btn large-btn">기록 저장하기</button>
+            
+            <div style="background-color: #F8FAFC; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; border: 1px solid #E5E7EB;">
+                <p style="margin:0; font-size: 14px; color: var(--text-muted);">이번 세션 공부 시간</p>
+                <div id="resultTimeText" style="font-size: 24px; font-weight: 700; color: var(--primary); margin-top: 8px;">0분 0초</div>
+            </div>
+
+            <div class="input-group">
+                <label for="problemInput">이번에 푼 문제 수는 몇 개인가요? (선택)</label>
+                <input type="number" id="problemInput" placeholder="예: 15" min="0">
+            </div>
+            <button id="saveSessionBtn" class="primary-btn large-btn">기록 저장하고 돌아가기</button>
         </div>
     </div>
 
@@ -283,12 +276,11 @@
          Firebase 및 메인 로직 스크립트
          ========================================= -->
     <script type="module">
-        // 1. Firebase v12.10.0 모듈 임포트
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-        // 2. 제공해주신 Firebase 설정
+        // Firebase 설정
         const firebaseConfig = {
             apiKey: "AIzaSyAwJctLPQDWc9hFQv5BdizuS_t0iLT9xKY",
             authDomain: "game-28340361-be8ef.firebaseapp.com",
@@ -298,12 +290,11 @@
             appId: "1:183534954954:web:902ff83bf9fe206e758733"
         };
 
-        // 3. 초기화
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 상태 관리 변수
+        // 앱 상태 변수
         let currentUser = null;
         let currentSubject = "";
         let startTime = null;
@@ -311,7 +302,15 @@
         let timerInterval = null;
         let chartInstance = null; 
 
-        const subjects = ["국어", "수학", "영어", "과학 탐구", "사회 탐구", "진로과목"];
+        // 과목 리스트 (아이콘 매핑)
+        const subjectsData = [
+            { name: "국어", icon: "📖" },
+            { name: "수학", icon: "📐" },
+            { name: "영어", icon: "🔤" },
+            { name: "과학 탐구", icon: "🔬" },
+            { name: "사회 탐구", icon: "🌍" },
+            { name: "진로과목", icon: "🚀" }
+        ];
 
         // -------------------------------------------------------------
         // 화면 전환 유틸리티
@@ -321,85 +320,29 @@
             document.getElementById(pageId).classList.add('active');
         }
 
+        function getTodayDateString() {
+            const offset = new Date().getTimezoneOffset() * 60000;
+            return new Date(Date.now() - offset).toISOString().split('T')[0];
+        }
+
         // -------------------------------------------------------------
-        // 로그인 & 로그아웃 로직 (화면 이동 방식 - 모바일 최적화)
+        // 인증 및 초기 로드 로직
         // -------------------------------------------------------------
-        document.getElementById('loginBtn').onclick = async () => {
+        document.getElementById('loginBtn').onclick = () => {
             const provider = new GoogleAuthProvider();
-            const errorBox = document.getElementById('loginError');
-            errorBox.style.display = 'none';
-            
-            try {
-                // 모바일 환경을 고려한 Redirect 방식
-                await signInWithRedirect(auth, provider);
-            } catch (error) {
-                console.error("로그인 시작 에러:", error);
-                
-                if (error.code === 'auth/unauthorized-domain') {
-                    const currentDomain = window.location.hostname || "현재 브라우저 주소"; 
-                    
-                    errorBox.innerHTML = `
-                        <strong>🚨 승인되지 않은 도메인입니다!</strong><br><br>
-                        Firebase 보안 설정 때문에 로그인이 차단되었습니다. 아래의 주소를 Firebase 콘솔에 추가해주세요.<br>
-                        <span class="domain-highlight">${currentDomain}</span>
-                        <strong>[해결 방법]</strong><br>
-                        1. Firebase 콘솔 접속<br>
-                        2. Authentication > Settings(설정) > 승인된 도메인(Authorized domains) 이동<br>
-                        3. 위 주소를 '도메인 추가'를 눌러 등록 후 새로고침
-                    `;
-                    errorBox.style.display = 'block';
-                } else {
-                    errorBox.innerText = "로그인 요청 중 오류가 발생했습니다: " + error.message;
-                    errorBox.style.display = 'block';
-                }
-            }
+            signInWithRedirect(auth, provider).catch(error => {
+                alert("로그인 에러: " + error.message);
+            });
         };
 
-        // 구글 로그인 화면에서 돌아왔을 때의 결과를 처리합니다.
-        getRedirectResult(auth).catch((error) => {
-            console.error("로그인 결과 에러:", error);
-            const errorBox = document.getElementById('loginError');
-            
-            if (error.code === 'auth/unauthorized-domain') {
-                const currentDomain = window.location.hostname || "현재 브라우저 주소";
-                
-                errorBox.innerHTML = `
-                    <strong>🚨 승인되지 않은 도메인입니다!</strong><br><br>
-                    Firebase 보안 설정 때문에 로그인이 차단되었습니다. 아래의 주소를 Firebase 콘솔에 추가해주세요.<br>
-                    <span class="domain-highlight">${currentDomain}</span>
-                    <strong>[해결 방법]</strong><br>
-                    1. Firebase 콘솔 접속<br>
-                    2. Authentication > Settings(설정) > 승인된 도메인(Authorized domains) 이동<br>
-                    3. 위 주소를 '도메인 추가'를 눌러 등록 후 새로고침
-                `;
-                errorBox.style.display = 'block';
-            } else {
-                errorBox.innerText = "로그인 결과 처리 중 오류가 발생했습니다: " + error.message;
-                errorBox.style.display = 'block';
-            }
-        });
+        document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
-        document.getElementById('logoutBtn').onclick = async () => {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("로그아웃 에러:", error);
-            }
-        };
-
-        // 로그인 상태 감지 리스너
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // 이전에 혹시 남은 게스트 계정이 있다면 깔끔하게 로그아웃 처리
-                if (user.isAnonymous) {
-                    console.log("익명 계정 감지됨. 로그아웃 처리.");
-                    signOut(auth);
-                    return;
-                }
                 currentUser = user;
-                document.getElementById('userEmailText').innerText = user.email || user.displayName;
-                document.getElementById('loginError').style.display = 'none';
+                document.getElementById('userEmailText').innerText = user.displayName || user.email;
                 renderSubjectPage();
+                await loadTodayTotalTime(); // 오늘 총 공부시간 로드
                 showPage("subjectPage");
             } else {
                 currentUser = null;
@@ -408,102 +351,140 @@
         });
 
         // -------------------------------------------------------------
-        // 과목 페이지 렌더링
+        // 대시보드 (과목 & 오늘 총 시간)
         // -------------------------------------------------------------
         function renderSubjectPage() {
             const list = document.getElementById('subjectList');
             list.innerHTML = '';
-            subjects.forEach(sub => {
+            subjectsData.forEach(sub => {
                 const btn = document.createElement('button');
                 btn.className = 'subject-btn';
-                btn.innerText = sub;
+                btn.innerHTML = `<span class="icon">${sub.icon}</span><span>${sub.name}</span>`;
                 btn.onclick = () => {
-                    currentSubject = sub;
-                    document.getElementById('graphSubjectTitle').innerText = sub;
-                    loadGraphData(sub); 
+                    currentSubject = sub.name;
+                    document.getElementById('graphSubjectTitle').innerText = sub.icon + " " + sub.name;
+                    loadGraphData(sub.name); 
                     showPage("graphPage");
                 };
                 list.appendChild(btn);
             });
         }
 
-        document.getElementById('backToSubjectsBtn').onclick = () => {
+        async function loadTodayTotalTime() {
+            if (!currentUser) return;
+            const today = getTodayDateString();
+            try {
+                // 사용자의 모든 기록 중 오늘 날짜인 것만 가져오기
+                const q = query(
+                    collection(db, "users", currentUser.uid, "study_sessions"),
+                    where("date", "==", today)
+                );
+                const snapshot = await getDocs(q);
+                let totalSeconds = 0;
+                snapshot.forEach(doc => {
+                    totalSeconds += doc.data().durationInSeconds || 0;
+                });
+                
+                const hr = Math.floor(totalSeconds / 3600);
+                const min = Math.floor((totalSeconds % 3600) / 60);
+                
+                if (hr > 0) {
+                    document.getElementById('todayTotalTime').innerText = `${hr}시간 ${min}분`;
+                } else {
+                    document.getElementById('todayTotalTime').innerText = `${min}분`;
+                }
+            } catch (e) {
+                console.error("총 시간 로드 에러:", e);
+            }
+        }
+
+        document.getElementById('backToSubjectsBtn').onclick = async () => {
+            await loadTodayTotalTime(); // 돌아갈 때 요약 업데이트
             showPage("subjectPage");
         };
 
         // -------------------------------------------------------------
-        // 그래프 데이터 로드 및 렌더링 로직 (Chart.js)
+        // 그래프 데이터 로드 (Chart.js) - 시간 & 문제 수 듀얼 축
         // -------------------------------------------------------------
         async function loadGraphData(subject) {
             if (!currentUser) return;
+            document.getElementById('graphLoading').style.display = 'block';
+            document.getElementById('studyChart').style.display = 'none';
 
             let snapshot;
             try {
-                // 로그인한 유저의 UID를 경로로 사용하여 보안 규칙 완벽 대응
                 const q = query(
                     collection(db, "users", currentUser.uid, "study_sessions"),
                     where("subject", "==", subject)
                 );
                 snapshot = await getDocs(q);
             } catch (e) {
-                console.error("데이터 로드 에러:", e);
-                alert("데이터를 불러오지 못했습니다. 권한 설정을 확인해주세요.");
+                alert("데이터 불러오기 실패. 인터넷 연결을 확인하세요.");
                 return;
+            } finally {
+                document.getElementById('graphLoading').style.display = 'none';
+                document.getElementById('studyChart').style.display = 'block';
             }
 
-            const dateMap = {};
+            const dailyData = {};
 
-            // 날짜별 공부시간 합산
+            // 데이터 일자별 병합
             snapshot.forEach(doc => {
                 const data = doc.data();
-                if (dateMap[data.date]) {
-                    dateMap[data.date] += data.duration;
-                } else {
-                    dateMap[data.date] = data.duration;
+                const date = data.date;
+                if (!dailyData[date]) {
+                    dailyData[date] = { seconds: 0, problems: 0 };
                 }
+                dailyData[date].seconds += (data.durationInSeconds || 0);
+                dailyData[date].problems += (data.problems || 0);
             });
 
-            // 날짜 오름차순 정렬
-            const sortedDates = Object.keys(dateMap).sort();
-            const durations = sortedDates.map(date => dateMap[date]);
-
+            const sortedDates = Object.keys(dailyData).sort();
             const labels = sortedDates.map(date => {
                 const d = new Date(date);
                 return `${d.getMonth() + 1}/${d.getDate()}`;
             });
+            const durationData = sortedDates.map(date => Math.floor(dailyData[date].seconds / 60)); // 분 단위 환산
+            const problemData = sortedDates.map(date => dailyData[date].problems);
 
-            drawChart(labels, durations);
+            drawDualChart(labels, durationData, problemData);
         }
 
-        function drawChart(labels, data) {
+        function drawDualChart(labels, durationData, problemData) {
             const ctx = document.getElementById('studyChart').getContext('2d');
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+            if (chartInstance) chartInstance.destroy();
+            
             chartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: '총 공부 시간 (분)',
-                        data: data,
-                        borderColor: '#4CAF50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#4CAF50',
-                        pointRadius: 4
-                    }]
+                    datasets: [
+                        {
+                            label: '공부 시간 (분)',
+                            data: durationData,
+                            backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                            borderRadius: 6,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '푼 문제 수',
+                            data: problemData,
+                            type: 'line',
+                            borderColor: '#EF4444',
+                            backgroundColor: '#EF4444',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
                     scales: {
-                        y: { 
-                            beginAtZero: true,
-                            suggestedMax: Math.max(...data, 60)
-                        }
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '시간 (분)' } },
+                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '문제 수' }, grid: { drawOnChartArea: false } }
                     }
                 }
             });
@@ -513,7 +494,7 @@
         // 타이머 로직
         // -------------------------------------------------------------
         document.getElementById('startStudyBtn').onclick = () => {
-            document.getElementById('timerSubjectTitle').innerText = currentSubject;
+            document.getElementById('timerSubjectTitle').innerText = currentSubject + " 공부 중 🚀";
             startTime = new Date();
             document.getElementById('timerDisplay').innerText = "00:00:00";
             timerInterval = setInterval(updateTimer, 1000);
@@ -528,27 +509,28 @@
             const min = Math.floor((diff / 60000) % 60);
             const hr = Math.floor(diff / 3600000);
 
-            const formattedTime = 
+            document.getElementById('timerDisplay').innerText = 
                 String(hr).padStart(2, '0') + ":" + 
                 String(min).padStart(2, '0') + ":" + 
                 String(sec).padStart(2, '0');
-                
-            document.getElementById('timerDisplay').innerText = formattedTime;
         }
 
         document.getElementById('stopStudyBtn').onclick = () => {
             clearInterval(timerInterval);
             endTime = new Date();
             
-            const duration = Math.floor((endTime - startTime) / 60000);
-            document.getElementById('resultTimeText').innerText = `방금 ${duration}분 동안 공부했어요!`;
+            const totalSeconds = Math.floor((endTime - startTime) / 1000);
+            const min = Math.floor(totalSeconds / 60);
+            const sec = totalSeconds % 60;
+            
+            document.getElementById('resultTimeText').innerText = `${min}분 ${sec}초`;
             document.getElementById('problemInput').value = "";
             
             showPage("problemPage");
         };
 
         // -------------------------------------------------------------
-        // Firestore 데이터 저장 로직
+        // 결과 저장 로직
         // -------------------------------------------------------------
         document.getElementById('saveSessionBtn').onclick = async () => {
             if (!currentUser) return;
@@ -557,37 +539,30 @@
             btn.disabled = true;
             btn.innerText = "저장 중...";
 
-            const duration = Math.floor((endTime - startTime) / 60000);
+            const durationInSeconds = Math.floor((endTime - startTime) / 1000);
             const problems = Number(document.getElementById('problemInput').value) || 0;
-            
-            // 로컬 타임존 기준으로 현재 날짜 구하기 (YYYY-MM-DD)
-            const offset = new Date().getTimezoneOffset() * 60000;
-            const todayDate = new Date(Date.now() - offset).toISOString().split('T')[0];
+            const todayDate = getTodayDateString();
 
             const sessionData = {
                 subject: currentSubject,
                 date: todayDate,
                 startTime: startTime.toISOString(),
                 endTime: endTime.toISOString(),
-                duration: duration,
-                problems: problems
+                durationInSeconds: durationInSeconds,
+                problems: problems,
+                timestamp: new Date() // 정렬을 위한 타임스탬프 추가
             };
 
             try {
-                // 로그인한 유저의 UID를 경로로 사용하여 데이터베이스 규칙 통과
-                await addDoc(
-                    collection(db, "users", currentUser.uid, "study_sessions"),
-                    sessionData
-                );
-                
-                loadGraphData(currentSubject);
-                showPage("graphPage");
+                await addDoc(collection(db, "users", currentUser.uid, "study_sessions"), sessionData);
+                await loadGraphData(currentSubject); // 그래프 리로드
+                showPage("graphPage"); // 그래프 페이지로 귀환
             } catch (error) {
-                console.error("저장 에러:", error);
-                alert("저장에 실패했습니다. 권한 설정을 확인해주세요.");
+                alert("저장 에러: 권한 설정을 확인하세요.");
+                console.error(error);
             } finally {
                 btn.disabled = false;
-                btn.innerText = "기록 저장하기";
+                btn.innerText = "기록 저장하고 돌아가기";
             }
         };
     </script>
