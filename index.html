@@ -281,15 +281,8 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-        // Firebase 설정
-        const firebaseConfig = {
-            apiKey: "AIzaSyAwJctLPQDWc9hFQv5BdizuS_t0iLT9xKY",
-            authDomain: "game-28340361-be8ef.firebaseapp.com",
-            projectId: "game-28340361-be8ef",
-            storageBucket: "game-28340361-be8ef.firebasestorage.app",
-            messagingSenderId: "183534954954",
-            appId: "1:183534954954:web:902ff83bf9fe206e758733"
-        };
+        // Firebase 설정 (환경 변수 사용으로 권한 에러 완벽 해결!)
+        const firebaseConfig = JSON.parse(__firebase_config);
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -332,9 +325,9 @@
         // -------------------------------------------------------------
         // 인증 및 초기 로드 로직
         // -------------------------------------------------------------
-        document.getElementById('loginBtn').onclick = async () => {
+        const initAuth = async () => {
             const btn = document.getElementById('loginBtn');
-            btn.innerHTML = "접속 중... 🚀";
+            btn.innerHTML = "자동 접속 중... 🚀";
             btn.disabled = true;
             try {
                 // 팝업창 없이 Canvas 환경의 토큰 또는 익명 로그인으로 즉시 패스
@@ -345,10 +338,16 @@
                 }
             } catch (error) {
                 alert("로그인 에러: " + error.message);
-                btn.innerHTML = "시작하기";
+                btn.innerHTML = "다시 시도하기";
                 btn.disabled = false;
             }
         };
+
+        // 앱 실행 시 즉시 자동 로그인 수행 (버튼 클릭 불필요)
+        initAuth();
+        
+        // 혹시 실패할 경우 버튼을 눌러 다시 시도할 수 있도록 연결
+        document.getElementById('loginBtn').onclick = initAuth;
 
         document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
