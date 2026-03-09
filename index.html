@@ -34,7 +34,7 @@
             display: flex;
             justify-content: center;
             height: 100vh;
-            height: 100dvh; /* 모바일 브라우저 툴바 대응 */
+            height: 100dvh;
         }
 
         #app {
@@ -57,9 +57,7 @@
             overflow-y: auto;
         }
 
-        .page.active {
-            display: flex;
-        }
+        .page.active { display: flex; }
 
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(15px); }
@@ -70,19 +68,10 @@
         h2 { font-size: 20px; color: var(--text-main); margin-bottom: 16px; font-weight: 600; }
         p { color: var(--text-muted); text-align: center; margin-bottom: 30px; line-height: 1.5; }
 
-        /* 버튼 공통 스타일 */
         button {
-            border: none;
-            border-radius: 14px;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+            border: none; border-radius: 14px; padding: 16px; font-size: 16px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
         }
 
         button:active { transform: scale(0.98); }
@@ -98,65 +87,32 @@
 
         .large-btn { margin-top: auto; margin-bottom: 20px; }
 
-        /* 과목 그리드 */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
         .subject-btn {
-            background-color: #F9FAFB;
-            color: var(--text-main);
-            padding: 24px 16px;
-            font-size: 16px;
-            border-radius: 16px;
-            border: 1px solid #E5E7EB;
-            flex-direction: column;
-            gap: 12px;
+            background-color: #F9FAFB; color: var(--text-main); padding: 24px 16px;
+            font-size: 16px; border-radius: 16px; border: 1px solid #E5E7EB;
+            flex-direction: column; gap: 12px;
         }
         .subject-btn span.icon { font-size: 28px; }
         .subject-btn:hover { background-color: #EEF2FF; border-color: var(--primary); color: var(--primary); }
 
-        /* 오늘 공부 요약 카드 */
         .summary-card {
             background: linear-gradient(135deg, var(--primary), #818CF8);
-            border-radius: 16px;
-            padding: 20px;
-            color: white;
-            margin-bottom: 24px;
+            border-radius: 16px; padding: 20px; color: white; margin-bottom: 24px;
             box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
         }
         .summary-card h3 { font-size: 14px; font-weight: 500; opacity: 0.9; margin-bottom: 8px; }
         .summary-card .time { font-size: 32px; font-weight: 700; }
 
-        /* 타이머 */
-        .timer-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-        }
+        .timer-container { display: flex; justify-content: center; align-items: center; flex-grow: 1; }
         .timer-circle {
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            background-color: #F8FAFC;
-            border: 8px solid var(--primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 40px rgba(79, 70, 229, 0.2);
+            width: 280px; height: 280px; border-radius: 50%; background-color: #F8FAFC;
+            border: 8px solid var(--primary); display: flex; justify-content: center;
+            align-items: center; box-shadow: 0 0 40px rgba(79, 70, 229, 0.2);
         }
-        .timer-display {
-            font-size: 48px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            color: var(--text-main);
-            letter-spacing: -1px;
-        }
+        .timer-display { font-size: 48px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-main); letter-spacing: -1px; }
 
-        /* 입력폼 */
         .input-group { display: flex; flex-direction: column; margin-bottom: 30px; }
         .input-group label { margin-bottom: 10px; color: var(--text-main); font-weight: 600; font-size: 15px; }
         .input-group input {
@@ -165,78 +121,51 @@
         }
         .input-group input:focus { border-color: var(--primary); }
 
-        /* 그래프 영역 */
         .header { display: flex; align-items: center; margin-bottom: 24px; }
         .header h2 { margin: 0; flex-grow: 1; text-align: center; }
         .chart-container { flex-grow: 1; position: relative; width: 100%; min-height: 250px; margin-bottom: 20px; }
 
-        /* 로그인 정보 UI */
-        .user-info {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #E5E7EB;
-        }
+        .user-info { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #E5E7EB; }
         .user-email { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-        .logout-btn {
-            padding: 8px 12px; font-size: 13px; background-color: #F3F4F6;
-            color: var(--text-main); border-radius: 8px; font-weight: 600; box-shadow: none;
-        }
+        .logout-btn { padding: 8px 12px; font-size: 13px; background-color: #F3F4F6; color: var(--text-main); border-radius: 8px; font-weight: 600; box-shadow: none; }
         .logout-btn:hover { background-color: #E5E7EB; }
 
-        /* 로딩 스피너 */
-        .loading {
-            text-align: center; padding: 40px; color: var(--text-muted); font-weight: 500; display: none;
-        }
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 500; display: none; }
 
-        /* 토스트 메시지 (알림창) */
         #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 15px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-size: 15px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
         }
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* 로그인 폼 전용 스타일 추가 */
         .auth-form { width: 100%; margin-top: 20px; }
         .auth-form input {
-            width: 100%; padding: 14px; margin-bottom: 12px;
-            border: 2px solid #E5E7EB; border-radius: 12px;
-            font-size: 16px; outline: none; transition: border-color 0.2s;
+            width: 100%; padding: 14px; margin-bottom: 12px; border: 2px solid #E5E7EB;
+            border-radius: 12px; font-size: 16px; outline: none; transition: border-color 0.2s;
         }
         .auth-form input:focus { border-color: var(--primary); }
-        .btn-outline {
-            background-color: transparent; color: var(--primary);
-            border: 2px solid var(--primary); width: 100%; margin-top: 10px;
-        }
+        .btn-outline { background-color: transparent; color: var(--primary); border: 2px solid var(--primary); width: 100%; margin-top: 10px; }
         .btn-outline:hover { background-color: #EEF2FF; }
 
-        /* 커스텀 모달 (권한 팝업창) 스타일 추가 */
+        /* 💡 수정된 모달창 스타일 (화면 최상단 고정, z-index 극대화) */
         .modal-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none; justify-content: center; align-items: center;
-            z-index: 2000;
+            position: fixed; /* 앱 내부가 아닌 전체 화면 기준으로 고정 */
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none; /* JS를 통해 active 클래스가 붙으면 flex로 변경됨 */
+            justify-content: center; align-items: center;
+            z-index: 10000; /* 무조건 최상단에 보이도록 설정 */
+            backdrop-filter: blur(3px); /* 배경 흐림 효과 추가 */
         }
         .modal-overlay.active { display: flex; }
+        
         .modal-content {
             background: white; padding: 24px; border-radius: 16px;
             width: 85%; max-width: 320px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes popIn {
@@ -253,19 +182,20 @@
 </head>
 <body>
     <div id="toast">알림 메시지</div>
-    <div id="app">
-        <!-- 권한 요청 모달 (팝업창) -->
-        <div id="permissionModal" class="modal-overlay">
-            <div class="modal-content">
-                <h3>💾 기록 저장 권한</h3>
-                <p>소중한 학습 기록을 클라우드 데이터베이스에 안전하게 저장하시겠습니까?</p>
-                <div class="modal-buttons">
-                    <button id="denySaveBtn" class="btn-cancel">아니오</button>
-                    <button id="allowSaveBtn" class="primary-btn">허용 및 저장</button>
-                </div>
+
+    <!-- 💡 권한 요청 모달창 (전체 화면을 덮도록 #app 바깥으로 이동) -->
+    <div id="permissionModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>💾 기록 저장 권한</h3>
+            <p>소중한 학습 기록을 클라우드 데이터베이스에 안전하게 저장하시겠습니까?</p>
+            <div class="modal-buttons">
+                <button id="denySaveBtn" class="btn-cancel">아니오</button>
+                <button id="allowSaveBtn" class="primary-btn">허용 및 저장</button>
             </div>
         </div>
+    </div>
 
+    <div id="app">
         <!-- 1. 로그인 페이지 -->
         <div id="loginPage" class="page active">
             <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -347,18 +277,20 @@
                 <label for="problemInput">이번에 푼 문제 수는 몇 개인가요? (선택)</label>
                 <input type="number" id="problemInput" placeholder="예: 15" min="0">
             </div>
+            
+            <!-- 이 버튼을 누르면 모달창이 뜹니다 -->
             <button id="saveSessionBtn" class="primary-btn large-btn">기록 저장하고 돌아가기</button>
         </div>
     </div>
 
     <!-- =========================================
-         Firebase 및 메인 로직 스크립트
+         Firebase 및 메인 로직 스크립트 (버전 11.6.1로 고정 수정)
          ========================================= -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        // 권한 에러 해결을 위해 Canvas 전용 안전 인증 모듈 사용
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        // 💡 중요 수정: 12.10.0 (존재하지 않는 버전) -> 11.6.1 (정상 작동 버전) 으로 변경하여 스크립트 충돌 해결!
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase 설정 
         let firebaseConfig;
@@ -366,10 +298,7 @@
             firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
                 apiKey: "AIzaSyAwJctLPQDWc9hFQv5BdizuS_t0iLT9xKY",
                 authDomain: "game-28340361-be8ef.firebaseapp.com",
-                projectId: "game-28340361-be8ef",
-                storageBucket: "game-28340361-be8ef.firebasestorage.app",
-                messagingSenderId: "183534954954",
-                appId: "1:183534954954:web:902ff83bf9fe206e758733"
+                projectId: "game-28340361-be8ef"
             };
         } catch (e) {
             console.error("설정 로드 에러", e);
@@ -378,34 +307,22 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // 환경 변수에서 appId 가져오기 (필수 보안 규칙)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        // 앱 상태 변수
         let currentUser = null;
         let currentSubject = "";
         let startTime = null;
         let endTime = null;
         let timerInterval = null;
         let chartInstance = null; 
-        
-        // 사용자가 입력한 이메일 임시 저장용
         let displayEmail = "사용자"; 
 
-        // 과목 리스트 (아이콘 매핑)
         const subjectsData = [
-            { name: "국어", icon: "📖" },
-            { name: "수학", icon: "📐" },
-            { name: "영어", icon: "🔤" },
-            { name: "과학 탐구", icon: "🔬" },
-            { name: "사회 탐구", icon: "🌍" },
-            { name: "진로과목", icon: "🚀" }
+            { name: "국어", icon: "📖" }, { name: "수학", icon: "📐" },
+            { name: "영어", icon: "🔤" }, { name: "과학 탐구", icon: "🔬" },
+            { name: "사회 탐구", icon: "🌍" }, { name: "진로과목", icon: "🚀" }
         ];
 
-        // -------------------------------------------------------------
-        // 화면 전환 유틸리티
-        // -------------------------------------------------------------
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
@@ -416,7 +333,6 @@
             return new Date(Date.now() - offset).toISOString().split('T')[0];
         }
 
-        // 토스트 메시지 표시 함수
         function showToast(message) {
             const toast = document.getElementById("toast");
             toast.innerText = message;
@@ -424,22 +340,17 @@
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // -------------------------------------------------------------
-        // 인증 로직 (권한 에러 방지를 위한 Canvas 안전 인증 연동)
-        // -------------------------------------------------------------
         async function performSafeLogin(email, btn, loadingText, successText) {
             if (!email) {
                 showToast("이메일을 입력해주세요.");
                 return;
             }
-            displayEmail = email; // 화면 표시용 이메일 저장
-            
+            displayEmail = email; 
             const originalText = btn.innerHTML;
             btn.innerHTML = loadingText;
             btn.disabled = true;
 
             try {
-                // 권한 에러를 막기 위해 데이터베이스 규칙에 맞는 올바른 토큰 사용
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
@@ -460,7 +371,7 @@
 
         document.getElementById('emailSignupBtn').onclick = () => {
             const email = document.getElementById('emailInput').value;
-            performSafeLogin(email, document.getElementById('emailSignupBtn'), "가입 중...", "회원가입 완료! 환영합니다 🎉");
+            performSafeLogin(email, document.getElementById('emailSignupBtn'), "가입 중...", "환영합니다!");
         };
 
         document.getElementById('logoutBtn').onclick = () => {
@@ -473,7 +384,6 @@
                 currentUser = user;
                 document.getElementById('userEmailText').innerText = displayEmail;
                 renderSubjectPage();
-                
                 showPage("subjectPage"); 
                 await loadTodayTotalTime(); 
             } else {
@@ -482,9 +392,6 @@
             }
         });
 
-        // -------------------------------------------------------------
-        // 대시보드 (과목 & 오늘 총 시간)
-        // -------------------------------------------------------------
         function renderSubjectPage() {
             const list = document.getElementById('subjectList');
             list.innerHTML = '';
@@ -526,18 +433,15 @@
                     document.getElementById('todayTotalTime').innerText = `${min}분`;
                 }
             } catch (e) {
-                console.error("총 시간 로드 에러:", e);
+                console.error(e);
             }
         }
 
         document.getElementById('backToSubjectsBtn').onclick = async () => {
-            await loadTodayTotalTime(); // 돌아갈 때 요약 업데이트
+            await loadTodayTotalTime();
             showPage("subjectPage");
         };
 
-        // -------------------------------------------------------------
-        // 그래프 데이터 로드 (Chart.js)
-        // -------------------------------------------------------------
         async function loadGraphData(subject) {
             if (!currentUser) return;
             document.getElementById('graphLoading').style.display = 'block';
@@ -548,8 +452,8 @@
                 const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
                 snapshot = await getDocs(sessionsRef);
             } catch (e) {
-                showToast("데이터 불러오기 실패. 인터넷 연결을 확인하세요.");
                 console.error(e);
+                document.getElementById('graphLoading').innerText = "데이터 로딩 실패";
                 return;
             } finally {
                 document.getElementById('graphLoading').style.display = 'none';
@@ -557,14 +461,11 @@
             }
 
             const dailyData = {};
-
             snapshot.forEach(doc => {
                 const data = doc.data();
                 if (data.subject === subject) {
                     const date = data.date;
-                    if (!dailyData[date]) {
-                        dailyData[date] = { seconds: 0, problems: 0 };
-                    }
+                    if (!dailyData[date]) dailyData[date] = { seconds: 0, problems: 0 };
                     dailyData[date].seconds += (data.durationInSeconds || 0);
                     dailyData[date].problems += (data.problems || 0);
                 }
@@ -590,29 +491,12 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: '공부 시간 (분)',
-                            data: durationData,
-                            backgroundColor: 'rgba(79, 70, 229, 0.7)',
-                            borderRadius: 6,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: '푼 문제 수',
-                            data: problemData,
-                            type: 'line',
-                            borderColor: '#EF4444',
-                            backgroundColor: '#EF4444',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            yAxisID: 'y1'
-                        }
+                        { label: '공부 시간 (분)', data: durationData, backgroundColor: 'rgba(79, 70, 229, 0.7)', borderRadius: 6, yAxisID: 'y' },
+                        { label: '푼 문제 수', data: problemData, type: 'line', borderColor: '#EF4444', backgroundColor: '#EF4444', borderWidth: 2, tension: 0.3, yAxisID: 'y1' }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
                     scales: {
                         y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '시간 (분)' } },
                         y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '문제 수' }, grid: { drawOnChartArea: false } }
@@ -621,9 +505,6 @@
             });
         }
 
-        // -------------------------------------------------------------
-        // 타이머 로직
-        // -------------------------------------------------------------
         document.getElementById('startStudyBtn').onclick = () => {
             document.getElementById('timerSubjectTitle').innerText = currentSubject + " 공부 중 🚀";
             startTime = new Date();
@@ -635,7 +516,6 @@
         function updateTimer() {
             const now = new Date();
             const diff = now - startTime;
-            
             const sec = Math.floor((diff / 1000) % 60);
             const min = Math.floor((diff / 60000) % 60);
             const hr = Math.floor(diff / 3600000);
@@ -656,30 +536,31 @@
             
             document.getElementById('resultTimeText').innerText = `${min}분 ${sec}초`;
             document.getElementById('problemInput').value = "";
-            
             showPage("problemPage");
         };
 
         // -------------------------------------------------------------
-        // 팝업 모달 & 실제 결과 저장 로직 연동
+        // 💡 팝업 모달창 띄우기 & 닫기 & 실제 저장 로직
         // -------------------------------------------------------------
         
-        // 1. "기록 저장하고 돌아가기" 버튼 클릭 시 -> 모달 띄우기
+        // "기록 저장하고 돌아가기" 버튼 클릭 이벤트 (모달창 열기)
         document.getElementById('saveSessionBtn').onclick = () => {
             if (!currentUser) return;
-            document.getElementById('permissionModal').classList.add('active');
+            const modal = document.getElementById('permissionModal');
+            modal.classList.add('active');
         };
 
-        // 2. 모달에서 "아니오(취소)" 클릭 시 -> 모달 닫기
+        // "아니오" 버튼 클릭 이벤트 (모달창 닫기)
         document.getElementById('denySaveBtn').onclick = () => {
-            document.getElementById('permissionModal').classList.remove('active');
-            showToast("저장이 취소되었습니다. 다시 진행해주세요.");
+            const modal = document.getElementById('permissionModal');
+            modal.classList.remove('active');
+            showToast("저장이 취소되었습니다. 원하실 때 다시 버튼을 눌러주세요.");
         };
 
-        // 3. 모달에서 "허용 및 저장" 클릭 시 -> 실제 저장 진행
+        // "허용 및 저장" 버튼 클릭 이벤트 (데이터베이스 저장)
         document.getElementById('allowSaveBtn').onclick = async () => {
-            // 모달 닫기
-            document.getElementById('permissionModal').classList.remove('active');
+            const modal = document.getElementById('permissionModal');
+            modal.classList.remove('active'); // 팝업 닫기
 
             const btn = document.getElementById('saveSessionBtn');
             btn.disabled = true;
@@ -700,18 +581,17 @@
             };
 
             try {
-                // 내부 인증 로직 변경으로 권한 에러 없이 정상 통과!
                 const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
                 await addDoc(sessionsRef, sessionData);
                 
                 showToast("기록이 성공적으로 저장되었습니다!");
-                await loadGraphData(currentSubject); // 그래프 리로드
+                await loadGraphData(currentSubject); // 데이터 리로드
                 
                 btn.disabled = false;
                 btn.innerText = "기록 저장하고 돌아가기";
-                showPage("graphPage"); // 그래프 페이지로 귀환
+                showPage("graphPage"); // 메인 화면으로 귀환
             } catch (error) {
-                showToast("저장 에러가 발생했습니다.");
+                showToast("저장 에러가 발생했습니다. 잠시 후 시도해주세요.");
                 console.error(error);
                 btn.disabled = false;
                 btn.innerText = "다시 시도하기";
