@@ -187,6 +187,30 @@
             text-align: center; padding: 40px; color: var(--text-muted); font-weight: 500; display: none;
         }
 
+        /* 토스트 메시지 (알림창) */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 15px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
         /* 로그인 폼 전용 스타일 추가 */
         .auth-form { width: 100%; margin-top: 20px; }
         .auth-form input {
@@ -203,6 +227,7 @@
     </style>
 </head>
 <body>
+    <div id="toast">알림 메시지</div>
     <div id="app">
         <!-- 1. 로그인 페이지 -->
         <div id="loginPage" class="page active">
@@ -298,8 +323,20 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-        // Firebase 설정 (환경 변수 사용으로 권한 에러 완벽 해결!)
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // Firebase 설정 (환경 변수 사용 + 예비용 설정 추가로 멈춤 방지!)
+        let firebaseConfig;
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                apiKey: "AIzaSyAwJctLPQDWc9hFQv5BdizuS_t0iLT9xKY",
+                authDomain: "game-28340361-be8ef.firebaseapp.com",
+                projectId: "game-28340361-be8ef",
+                storageBucket: "game-28340361-be8ef.firebasestorage.app",
+                messagingSenderId: "183534954954",
+                appId: "1:183534954954:web:902ff83bf9fe206e758733"
+            };
+        } catch (e) {
+            console.error("설정 로드 에러", e);
+        }
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -339,6 +376,14 @@
             return new Date(Date.now() - offset).toISOString().split('T')[0];
         }
 
+        // 토스트 메시지 표시 함수 (alert 대체)
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
         // -------------------------------------------------------------
         // 인증 및 초기 로드 로직 (이메일/비밀번호 방식)
         // -------------------------------------------------------------
@@ -348,7 +393,7 @@
             const btn = document.getElementById('emailLoginBtn');
             
             if (!email || !pw) {
-                alert("이메일과 비밀번호를 입력해주세요.");
+                showToast("이메일과 비밀번호를 입력해주세요.");
                 return;
             }
 
@@ -357,8 +402,9 @@
 
             try {
                 await signInWithEmailAndPassword(auth, email, pw);
+                showToast("로그인 성공!");
             } catch (error) {
-                alert("로그인 실패: 이메일이나 비밀번호를 확인해주세요.");
+                showToast("로그인 실패: " + error.message);
             } finally {
                 btn.innerHTML = "로그인";
                 btn.disabled = false;
@@ -371,7 +417,7 @@
             const btn = document.getElementById('emailSignupBtn');
 
             if (!email || pw.length < 6) {
-                alert("유효한 이메일과 6자리 이상의 비밀번호를 입력해주세요.");
+                showToast("유효한 이메일과 6자리 이상의 비밀번호를 입력해주세요.");
                 return;
             }
 
@@ -380,16 +426,19 @@
 
             try {
                 await createUserWithEmailAndPassword(auth, email, pw);
-                alert("회원가입이 완료되었습니다! 환영합니다 🎉");
+                showToast("회원가입이 완료되었습니다! 환영합니다 🎉");
             } catch (error) {
-                alert("회원가입 실패: 이미 사용중인 이메일이거나 형식이 올바르지 않습니다.");
+                showToast("회원가입 실패: 이미 가입된 이메일이거나 형식이 잘못되었습니다.");
             } finally {
                 btn.innerHTML = "이메일로 회원가입";
                 btn.disabled = false;
             }
         };
 
-        document.getElementById('logoutBtn').onclick = () => signOut(auth);
+        document.getElementById('logoutBtn').onclick = () => {
+            signOut(auth);
+            showToast("로그아웃 되었습니다.");
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -476,7 +525,7 @@
                 const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
                 snapshot = await getDocs(sessionsRef);
             } catch (e) {
-                alert("데이터 불러오기 실패. 인터넷 연결을 확인하세요.");
+                showToast("데이터 불러오기 실패. 인터넷 연결을 확인하세요.");
                 console.error(e);
                 return;
             } finally {
@@ -618,10 +667,11 @@
                 const sessionsRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'study_sessions');
                 await addDoc(sessionsRef, sessionData);
                 
+                showToast("기록이 저장되었습니다!");
                 await loadGraphData(currentSubject); // 그래프 리로드
                 showPage("graphPage"); // 그래프 페이지로 귀환
             } catch (error) {
-                alert("저장 에러: 권한 설정을 확인하세요.");
+                showToast("저장 에러: 권한 설정을 확인하세요.");
                 console.error(error);
             } finally {
                 btn.disabled = false;
